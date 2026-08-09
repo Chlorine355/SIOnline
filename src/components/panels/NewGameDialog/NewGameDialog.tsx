@@ -14,19 +14,22 @@ import RoomOptions from '../RoomOptions/RoomOptions';
 import { setPackageHostManaged, setPackageLibrary } from '../../../state/gameSlice';
 import { setStorageIndex } from '../../../state/siPackagesSlice';
 import ProgressDialog from '../ProgressDialog/ProgressDialog';
+import AuthorizationMode from '../../../client/contracts/AuthorizationMode';
+import { userErrorChanged } from '../../../state/commonSlice';
+import { validateLoginName } from '../../../utils/loginValidation';
 
 import './NewGameDialog.css';
 
 interface NewGameDialogProps {
 	isSingleGame: boolean;
 
-	onCreate: (isSingleGame: boolean, appDispatch: AppDispatch) => void;
+	onCreate: (isSingleGame: boolean, appDispatch: AppDispatch, userName: string, authorizationMode: AuthorizationMode) => void;
 	onClose: () => void;
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
-	onCreate: (isSingleGame: boolean, appDispatch: AppDispatch) => {
-		dispatch(onlineActionCreators.createNewGame(isSingleGame, appDispatch) as unknown as Action);
+	onCreate: (isSingleGame: boolean, appDispatch: AppDispatch, userName: string, authorizationMode: AuthorizationMode) => {
+		dispatch(onlineActionCreators.createNewGame(isSingleGame, appDispatch, userName, authorizationMode) as unknown as Action);
 	},
 });
 
@@ -40,6 +43,19 @@ export function NewGameDialog(props: NewGameDialogProps) {
 	const uploadPackageProgress = useAppSelector(state => state.online2.uploadPackageProgress);
 	const uploadPackagePercentage = useAppSelector(state => state.online2.uploadPackagePercentage);
 	const downloadPackageProgress = useAppSelector(state => state.online2.downloadPackageProgress);
+	const { login, authName } = useAppSelector(state => state.user);
+	const [userName, setUserName] = React.useState(login);
+	const [useAuth, setUseAuth] = React.useState(!!authName);
+
+	React.useEffect(() => {
+		setUserName(login);
+	}, [login]);
+
+	React.useEffect(() => {
+		if (!authName) {
+			setUseAuth(false);
+		}
+	}, [authName]);
 
 	React.useEffect(() => {
 		if (navigation.packageUri) {
@@ -66,6 +82,36 @@ export function NewGameDialog(props: NewGameDialogProps) {
 		}
 	};
 
+	const onNameBlur = () => {
+		const validationError = validateLoginName(userName);
+
+		if (validationError) {
+			appDispatch(userErrorChanged(validationError));
+			return;
+		}
+
+		const trimmedName = userName.trim();
+
+		if (trimmedName !== userName) {
+			setUserName(trimmedName);
+		}
+	};
+
+	const selectedUserName = useAuth && authName ? authName : userName;
+	const isSelectedNameInvalid = validateLoginName(selectedUserName) !== null;
+	const authorizationMode = useAuth ? AuthorizationMode.Steam : AuthorizationMode.None;
+
+	const onCreate = () => {
+		const validationError = validateLoginName(selectedUserName);
+
+		if (validationError) {
+			appDispatch(userErrorChanged(validationError));
+			return;
+		}
+
+		props.onCreate(props.isSingleGame, appDispatch, selectedUserName.trim(), authorizationMode);
+	};
+
 	function getContent(): React.ReactNode {
 		switch (activeTab) {
 			case 0:
@@ -73,6 +119,13 @@ export function NewGameDialog(props: NewGameDialogProps) {
 					isSingleGame={props.isSingleGame}
 					isSIStorageOpen={isSIStorageOpen}
 					setIsSIStorageOpen={openStorage}
+						userName={userName}
+						setUserName={setUserName}
+						useAuth={useAuth}
+						setUseAuth={setUseAuth}
+						authName={authName}
+						onNameBlur={onNameBlur}
+						onCreate={onCreate}
 				/>;
 
 			case 1:
@@ -86,11 +139,13 @@ export function NewGameDialog(props: NewGameDialogProps) {
 		}
 	}
 
-	const progressMessage = downloadPackageProgress
-		? localization.downloadingPackage
-		: (uploadPackageProgress
-			? localization.sendingPackage
-			: localization.creatingGame);
+	let progressMessage = localization.creatingGame;
+
+	if (downloadPackageProgress) {
+		progressMessage = localization.downloadingPackage;
+	} else if (uploadPackageProgress) {
+		progressMessage = localization.sendingPackage;
+	}
 
 	return (
 		<>
@@ -108,8 +163,8 @@ export function NewGameDialog(props: NewGameDialogProps) {
 					<button
 						type="button"
 						className="startGame mainAction active"
-						disabled={gameCreationProgress || (!props.isSingleGame && gameName.length === 0)}
-						onClick={() => props.onCreate(props.isSingleGame, appDispatch)}
+						disabled={gameCreationProgress || (!props.isSingleGame && gameName.length === 0) || isSelectedNameInvalid}
+						onClick={onCreate}
 					>
 						{localization.startGame.toLocaleUpperCase()}
 					</button>

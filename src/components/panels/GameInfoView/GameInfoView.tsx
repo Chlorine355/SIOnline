@@ -194,7 +194,7 @@ export function GameInfoView(props: GameInfoViewProps): JSX.Element {
 			return;
 		}
 
-		const authMode = useAuth ? AuthorizationMode.Account : AuthorizationMode.None;
+		const authMode = useAuth ? AuthorizationMode.Steam : AuthorizationMode.None;
 		props.onJoin(game.HostUri, game.GameID, nameToUse.trim(), role, appDispatch, authMode);
 	};
 

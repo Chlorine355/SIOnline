@@ -22,7 +22,7 @@
         width: 18px;
         height: 18px;
         object-fit: contain;
-        filter: brightness(0.7);
+        filter: none;
         transition: filter 0.2s;
     }
 
@@ -31,7 +31,7 @@
         background: #181B64BB;
 
         img {
-            filter: brightness(1);
+            filter: none;
         }
     }
 
@@ -41,7 +41,7 @@
         transform: scale(1.08);
 
         img {
-            filter: brightness(1.2);
+            filter: none;
         }
     }
 }

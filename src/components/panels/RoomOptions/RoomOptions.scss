@@ -2,6 +2,38 @@
     display: none;
 }
 
+.roomOptionsAuthInputContainer {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 8px;
+	width: 100%;
+}
+
+.roomOptionsAuthInputContainer .authTypeSelector {
+	justify-content: flex-start;
+	flex: 0 0 auto;
+}
+
+.roomOptionsAuthInputContainer .roomOptionsNameInput {
+	flex: 1 1 auto;
+	min-width: 0;
+	max-width: none;
+	width: auto;
+	color: white;
+	background: #181B64;
+	border: 1px solid #347DFF;
+	border-radius: 5px;
+	padding: 5px 6px;
+	font-size: 16px;
+	text-align: left;
+}
+
+.roomOptionsAuthInputContainer .roomOptionsNameInput.nameInput--auth {
+	text-align: left;
+}
+
 .packageSelector {
     display: flex;
     flex-direction: row;

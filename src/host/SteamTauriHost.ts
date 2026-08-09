@@ -82,9 +82,9 @@ export default class SteamTauriHost extends TauriHost {
 				localStorage.setItem(Constants.AVATAR_NAME_KEY, 'steam_avatar.png');
 			}
 
-			const { userId, token } = await this.loginBySteamAsync();
+			// const { userId, token } = await this.loginBySteamAsync();
 
-			console.log('Steam user logged in with userId:', userId, ' token:', token);
+			// console.log('Steam user logged in with userId:', userId, ' token:', token);
 		} catch (error) {
 			console.error('Failed to get Steam user info:', error);
 		}
@@ -95,7 +95,7 @@ export default class SteamTauriHost extends TauriHost {
 	}
 
 	getAuthToken(): string | null {
-		return this.accountServiceClient.getBearerToken() ?? null;
+		return /*this.accountServiceClient.getBearerToken() ??*/ null;
 	}
 
 	async getAuthorizationData(authorizationMode?: AuthorizationMode): Promise<AuthorizationData | null> {

@@ -151,6 +151,14 @@ function getServerRole(role: Role) {
 	return role === Role.Player ? ServerRole.Player : ServerRole.Showman;
 }
 
+function getReservedUserName(userName: string, authorizationMode: AuthorizationMode): string {
+	if (authorizationMode !== AuthorizationMode.Steam) {
+		return userName;
+	}
+
+	return userName.startsWith('Ⓢ') ? userName : `Ⓢ${userName}`;
+}
+
 const joinGame: ActionCreator<ThunkAction<void, State, DataContext, Action>> =
 	(hostUri: string, gameId: number, userName: string, role: Role, pin: number | null, appDispatch: AppDispatch, isAutomatic: boolean, authorizationMode: AuthorizationMode = AuthorizationMode.None) => async (
 		dispatch: Dispatch<any>,
@@ -252,6 +260,7 @@ function createGameSettings(
 	playersCount: number,
 	role: Role,
 	state: State,
+	humanPlayerName: string,
 	players: AccountSettings[],
 	game: GameState,
 	isSingleGame: boolean,
@@ -332,7 +341,7 @@ function createGameSettings(
 	};
 
 	const gameSettings: GameSettings = {
-		humanPlayerName: state.user.login,
+		humanPlayerName: humanPlayerName,
 		networkGameName: game.name.trim(),
 		networkGamePassword: game.password,
 		networkVoiceChat: game.voiceChat,
@@ -503,8 +512,18 @@ async function getPackageInfoAsync(state: State, game: GameState, dataContext: D
 }
 
 const createNewGame: ActionCreator<ThunkAction<void, State, DataContext, Action>> =
-	(isSingleGame: boolean, appDispatch: AppDispatch) => async (dispatch: Dispatch<any>, getState: () => State, dataContext: DataContext) => {
+	(
+		isSingleGame: boolean,
+		appDispatch: AppDispatch,
+		userName: string,
+		authorizationMode: AuthorizationMode = AuthorizationMode.None,
+	) => async (
+		dispatch: Dispatch<any>,
+		getState: () => State,
+		dataContext: DataContext,
+	) => {
 		const state = getState();
+		const trimmedUserName = userName.trim();
 
 		if (state.online2.gameCreationProgress || state.online2.joinGameProgress) {
 			return;
@@ -520,6 +539,11 @@ const createNewGame: ActionCreator<ThunkAction<void, State, DataContext, Action>
 		const randomValue = dataContext.host.getRandomValue ?? getRandomValue;
 
 		try {
+			const effectiveUserName = authorizationMode !== AuthorizationMode.None && state.user.authName
+				? state.user.authName
+				: trimmedUserName;
+			const reservedUserName = getReservedUserName(effectiveUserName, authorizationMode);
+
 			const game = isSingleGame
 				? {
 					...state.game,
@@ -530,13 +554,17 @@ const createNewGame: ActionCreator<ThunkAction<void, State, DataContext, Action>
 				} : state.game;
 
 			const { playersCount, role } = game;
-			const me: AccountSettings = { name: state.user.login, isHuman: true, isMale: state.settings.sex === Sex.Male };
+			const me: AccountSettings = { name: reservedUserName, isHuman: true, isMale: state.settings.sex === Sex.Male };
 
-			const showman: AccountSettings = role === Role.Showman
-				? me
-				: game.isShowmanHuman
-					? { name: Constants.ANY_NAME, isHuman: true }
-					: { name: localization.defaultShowman };
+			let showman: AccountSettings;
+
+			if (role === Role.Showman) {
+				showman = me;
+			} else if (game.isShowmanHuman) {
+				showman = { name: Constants.ANY_NAME, isHuman: true };
+			} else {
+				showman = { name: localization.defaultShowman };
+			}
 
 			const players: AccountSettings[] = [];
 			const viewers: AccountSettings[] = [];
@@ -551,6 +579,7 @@ const createNewGame: ActionCreator<ThunkAction<void, State, DataContext, Action>
 				playersCount,
 				role,
 				state,
+				reservedUserName,
 				players,
 				game,
 				isSingleGame,
@@ -573,7 +602,7 @@ const createNewGame: ActionCreator<ThunkAction<void, State, DataContext, Action>
 				appDispatch(userErrorChanged(GameErrorsHelper.getMessage(result.errorType)));
 			} else {
 				appDispatch(passwordChanged(gameSettings.networkGamePassword));
-				dispatch(joinGame(result.hostUri, result.gameId, state.user.login, role, null, appDispatch, false));
+				dispatch(joinGame(result.hostUri, result.gameId, effectiveUserName, role, null, appDispatch, false, authorizationMode));
 			}
 		} catch (error) {
 			const userError = getErrorMessage(error);

@@ -725,7 +725,7 @@ async function initializeApp() {
 		console.log('Game configured as: Classic game with 3 players');
 
 		// Step 4: Create a new game (single player vs bots)
-		store.dispatch(onlineActionCreators.createNewGame(false, store.dispatch) as unknown as Action);
+		store.dispatch(onlineActionCreators.createNewGame(false, store.dispatch, store.getState().user.login) as unknown as Action);
 
 		// Wait for game creation
 		await new Promise(resolve => setTimeout(resolve, 5000));

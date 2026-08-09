@@ -15,40 +15,28 @@ import Constants from '../../../model/enums/Constants';
 import PackageType from '../../../model/enums/PackageType';
 import FlyoutButton, { FlyoutTheme } from '../../common/FlyoutButton/FlyoutButton';
 import PackageFileSelector from '../PackageFileSelector/PackageFileSelector';
-import { AppDispatch } from '../../../state/store';
-import State from '../../../state/State';
 import PackageSources from '../PackageSources/PackageSources';
 import Role from '../../../model/Role';
 import { userErrorChanged } from '../../../state/commonSlice';
-import { connect } from 'react-redux';
-import onlineActionCreators from '../../../state/online/onlineActionCreators';
-import { Dispatch } from 'react';
-import { Action } from 'redux';
-import { INavigationState } from '../../../state/uiSlice';
 import AutoSizedText from '../../common/AutoSizedText/AutoSizedText';
+import AuthModeSelector from '../AuthModeSelector/AuthModeSelector';
+import NameInput from '../NameInput/NameInput';
 
 import './RoomOptions.scss';
 
 interface RoomOptionsProps {
 	isSingleGame: boolean;
-	isOralGame: boolean;
-	navigation: INavigationState;
 	isSIStorageOpen: boolean;
+	userName: string;
+	setUserName: (userName: string) => void;
+	useAuth: boolean;
+	setUseAuth: (useAuth: boolean) => void;
+	authName?: string;
+	onNameBlur: () => void;
 
-	onCreate: (isSingleGame: boolean, appDispatch: AppDispatch) => void;
+	onCreate: () => void;
 	setIsSIStorageOpen: (isOpen: boolean, storageIndex: number) => void;
 }
-
-const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
-	onCreate: (isSingleGame: boolean, appDispatch: AppDispatch) => {
-		dispatch(onlineActionCreators.createNewGame(isSingleGame, appDispatch) as unknown as Action);
-	},
-});
-
-const mapStateToProps = (state: State) => ({
-	isOralGame: state.settings.appSettings.oral,
-	navigation: state.ui.navigation,
-});
 
 function getPackageName(packageType: PackageType, packageName: string, packageData: File | null): string {
 	switch (packageType) {
@@ -65,6 +53,7 @@ function getPackageName(packageType: PackageType, packageName: string, packageDa
 
 export function RoomOptions(props: RoomOptionsProps) {
 	const game = useAppSelector((state) => state.game);
+	const isOralGame = useAppSelector(state => state.settings.appSettings.oral);
 	const maxPackageSizeMb = useAppSelector(state => state.common.maxPackageSizeMb);
 	const childRef = React.useRef<HTMLInputElement>(null);
 	const appDispatch = useAppDispatch();
@@ -89,7 +78,7 @@ export function RoomOptions(props: RoomOptionsProps) {
 
 	const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === Constants.KEY_ENTER_NEW) {
-			props.onCreate(props.isSingleGame, appDispatch);
+			props.onCreate();
 		}
 	};
 
@@ -117,6 +106,27 @@ export function RoomOptions(props: RoomOptionsProps) {
 	return <>
 		{props.isSingleGame ? null : (
 			<>
+				{props.authName ? (
+					<div className="block">
+						<div className='blockName'>{localization.yourName}</div>
+
+						<div className='blockValue roomOptionsAuthInputContainer'>
+							<AuthModeSelector useAuth={props.useAuth} setUseAuth={props.setUseAuth} />
+
+							<NameInput
+								className='roomOptionsNameInput'
+								userName={props.userName}
+								setName={props.setUserName}
+								onNameBlur={props.onNameBlur}
+								onKeyDown={onKeyPress}
+								useAuth={props.useAuth}
+								authName={props.authName}
+								joinGameProgress={false}
+							/>
+						</div>
+					</div>
+				) : null}
+
 				<div className="block">
 					<div className='blockName'>{localization.gameName}</div>
 
@@ -143,7 +153,7 @@ export function RoomOptions(props: RoomOptionsProps) {
 					/>
 				</div>
 
-				{props.isOralGame ? (
+				{isOralGame ? (
 					<div className="block">
 						<div className='blockName'>{localization.voiceChat}</div>
 
@@ -237,4 +247,4 @@ export function RoomOptions(props: RoomOptionsProps) {
 	</>;
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RoomOptions);
+export default RoomOptions;
