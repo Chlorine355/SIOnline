@@ -21,7 +21,7 @@ export default function GuaranteedAnswerButton() {
 			appDispatch(pressGameButton());
 		}
 	}, [
-		canPress
+		canPress, haveAnswerBeforeFs
 	]);
 
 	return (
