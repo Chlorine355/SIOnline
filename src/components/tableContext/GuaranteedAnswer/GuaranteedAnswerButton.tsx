@@ -18,6 +18,7 @@ export default function GuaranteedAnswerButton() {
 	const [haveAnswerBeforeFs, setHaveAnswerBeforeFs] = React.useState(false);
 	React.useEffect(() => {
 		if (canPress && haveAnswerBeforeFs) {
+			console.log('Boom!');
 			appDispatch(pressGameButton());
 		}
 	}, [
