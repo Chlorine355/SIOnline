@@ -17,8 +17,8 @@
     "test:e2e:debug": "playwright test --debug",
     "test-scenario": "ts-node ./src/Runner.ts",
     "lint": "eslint . --ext .ts --ext .tsx",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "predeploy": "npm run build-prod",
+    "deploy": "gh-pages -d dist"
   },
   "keywords": [
     "sigame"
