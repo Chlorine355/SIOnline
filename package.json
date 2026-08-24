@@ -1,7 +1,7 @@
 {
   "name": "sionline",
   "version": "1.0.0",
-  "description": "SIGame web client",
+  "description": "SIGame web client with tweaks",
   "main": "index.html",
   "scripts": {
     "build-dev": "webpack --mode development",
@@ -16,12 +16,15 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
     "test-scenario": "ts-node ./src/Runner.ts",
-    "lint": "eslint . --ext .ts --ext .tsx"
+    "lint": "eslint . --ext .ts --ext .tsx",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "keywords": [
     "sigame"
   ],
-  "author": "Vladimir Khil",
+  "homepage": "https://chlorine355.github.io/sionline",
+  "author": "Vladimir Khil feat. Andrey Akimov",
   "license": "MIT",
   "repository": "https://github.com/VladimirKhil/SIOnline",
   "dependencies": {
@@ -71,6 +74,7 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "file-loader": "^6.2.0",
+    "gh-pages": "^6.3.0",
     "html-loader": "^3.0.1",
     "html-webpack-plugin": "^5.5.0",
     "jest": "^28.1.0",
