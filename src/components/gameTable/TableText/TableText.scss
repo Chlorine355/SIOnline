@@ -5,13 +5,24 @@
 }
 
 @keyframes color-change {
-	100% { color: v.$highlighted-text-color; }
+	100% {
+		color: v.$highlighted-text-color;
+	}
 }
 
 .textHost {
 	overflow: hidden;
 	width: 100%;
 	flex: 1 0 0;
+	position: relative;
+}
+
+.copyIcon {
+	position: absolute;
+	top: 0;
+	right: 0;
+	font-size: 30px;
+	opacity: .6;
 }
 
 #table .tableText.margined {
