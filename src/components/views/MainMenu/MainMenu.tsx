@@ -46,6 +46,11 @@ export default function MainMenu(): JSX.Element {
 		}
 	}, [common.serverLicense]);
 
+	const resetHandler = () => {
+		localStorage.clear();
+		window.location.reload();
+	};
+
 	// setTimeout() is to forcibly load window.history before navigating
 	const onJoinByPin = () => setTimeout(() => appDispatch(navigate({ navigation: { path: Path.JoinByPin }, saveState: true })), 0);
 
@@ -69,6 +74,10 @@ export default function MainMenu(): JSX.Element {
 		{
 			label: localization.questionEditor,
 			onClick: () => appDispatch(navigate({ navigation: { path: Path.SIQuester }, saveState: true })),
+		},
+		{
+			label: 'Сброс данных',
+			onClick: resetHandler,
 		},
 		...(common.exitSupported
 			? [
