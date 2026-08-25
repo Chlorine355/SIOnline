@@ -32,3 +32,14 @@ button.mainAction.playerButton:disabled {
 button.mainAction.playerButton.hidden {
     background: transparent;
 }
+
+button.cheat {
+    position: relative;
+
+    &::after {
+        content: '✨';
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+}
