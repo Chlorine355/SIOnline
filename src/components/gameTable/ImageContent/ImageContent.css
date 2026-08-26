@@ -14,6 +14,14 @@
 	position: relative;
 }
 
+.cheats {
+	position: absolute;
+	top: 0;
+	right: 0;
+	font-size: 30px;
+	opacity: .6;
+}
+
 .inGameImg {
     max-width: 100%;
     max-height: 100%;
