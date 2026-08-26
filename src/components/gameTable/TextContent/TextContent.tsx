@@ -52,14 +52,23 @@ export default function TextContent(props: TextContentProps) {
 	const content = props.animateReading && room.settings.readingSpeed > 0
 		? getAnimatableContent(props.text, room.settings.readingSpeed, animationCycle)
 		: props.text;
+
 	const copyHandler = () => {
 		navigator.clipboard.writeText(props.text);
 	};
+
+	const searchHandler = () => {
+		window.open(`https://yandex.ru/search/?text=${props.text.split(' ').join('+')}`, '_blank');
+	};
+
 	return (
 		<div className='textHost'>
 			<AutoSizedText className="tableText fadeIn tableTextCenter" maxFontSize={72}>
 				{isAnswer ? <ClickableAnswer text={props.text}>{content}</ClickableAnswer> : content}
-				<button className="copyIcon" onClick={copyHandler}>📋</button>
+				<div className="textCheats">
+					<button onClick={copyHandler}>📋</button>
+					<button onClick={searchHandler}>🔎</button>
+				</div>
 			</AutoSizedText>
 		</div>
 	);
