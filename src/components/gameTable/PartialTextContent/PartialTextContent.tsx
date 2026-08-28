@@ -68,12 +68,24 @@ export default function PartialTextContent() {
 	const visibleText = text.slice(0, visibleLength);
 	const hiddenText = text.slice(visibleLength);
 
+	const copyHandler = () => {
+		navigator.clipboard.writeText(visibleText);
+	};
+
+	const searchHandler = () => {
+		window.open(`https://yandex.ru/search/?text=${visibleText.split(' ').join('+')}`, '_blank');
+	};
+
 	return (
 		<div className='textHost'>
 			<div ref={divRef} className="tableText nonAligned">
 				<span>
 					<span className="animatablePartialCharacter">{visibleText}</span>
 					<span className="invisible">{hiddenText}</span>
+					<div className="textCheats">
+						<button onClick={copyHandler}>📋</button>
+						<button onClick={searchHandler}>🔎</button>
+					</div>
 				</span>
 			</div>
 		</div>
