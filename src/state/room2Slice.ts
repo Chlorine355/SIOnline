@@ -1233,6 +1233,10 @@ export const sendChatMessage = createAsyncThunk(
 			level: MessageLevel.Information,
 		}));
 
+		// Info = default
+		// System = cursive
+		// Warning = red
+
 		if (!state.room2.chat.isVisible) {
 			thunkAPI.dispatch(room2Slice.actions.setChatActive(true));
 		}
