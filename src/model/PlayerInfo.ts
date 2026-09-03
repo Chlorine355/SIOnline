@@ -13,4 +13,5 @@ export default interface PlayerInfo extends PersonInfo {
 	mediaPreloadProgress: number;
 	answer: string;
 	isAppellating: boolean;
+	isMuted?: boolean;
 }

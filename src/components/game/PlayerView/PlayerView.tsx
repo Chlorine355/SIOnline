@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import * as React from 'react';
 import PlayerInfo from '../../../model/PlayerInfo';
 import AutoSizedText from '../../common/AutoSizedText/AutoSizedText';
@@ -14,7 +15,7 @@ import EditTableMenu from '../EditTableMenu/EditTableMenu';
 import Account from '../../../model/Account';
 import { useAppDispatch, useAppSelector } from '../../../state/hooks';
 import ScoreEditor from './ScoreEditor/ScoreEditor';
-import { setAreSumsEditable } from '../../../state/room2Slice';
+import { setAreSumsEditable, setPlayerIsMuted } from '../../../state/room2Slice';
 import PersonName from './PersonName';
 
 import './PlayerView.scss';
@@ -34,6 +35,7 @@ interface PlayerViewProps {
 	windowWidth: number;
 	windowHeight: number;
 	currentPrice: number;
+	isMuted?: boolean;
 
 	listRef: React.RefObject<HTMLUListElement>;
 
@@ -132,6 +134,10 @@ export function PlayerView(props: PlayerViewProps): JSX.Element {
 	const onPlayerClicked = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
 		props.onPlayerSelected();
 		e.stopPropagation();
+	};
+
+	const togglePlayerMute = () => {
+		appDispatch(setPlayerIsMuted({ name: player.name, isMuted: !player.isMuted }));
 	};
 
 	const displayedStake = player.stake > 0
@@ -250,6 +256,7 @@ export function PlayerView(props: PlayerViewProps): JSX.Element {
 						<AutoSizedText className='nameValue' maxFontSize={48}>
 							<PersonName name={player.name} />
 						</AutoSizedText>
+						<button className={player.isMuted ? undefined : 'mutable'} onClick={() => togglePlayerMute()}>{player.isMuted ? '🔇' : '🔊'}</button>
 
 						{areSumsEditable ? (
 							<ScoreEditor

@@ -66,6 +66,7 @@ const PlayersView: React.FC<PlayersViewProps> = (props) => {
 			avatarVideo={account?.avatarVideo}
 			avatarClass={avatarClass}
 			index={index}
+			isMuted={player.isMuted}
 			onPlayerSelected={() => onPlayerSelected(index)}
 			onSumChanged={(sum) => props.onSumChanged(index, sum)} />;
 	};

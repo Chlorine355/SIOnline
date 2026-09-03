@@ -9,6 +9,10 @@ import './GameLogView.css';
 export default function GameLogView() {
 	const name = useAppSelector(state => state.room2.name);
 	const chat = useAppSelector(state => state.room2.chat);
+
+	const players = useAppSelector(state => state.room2.persons.players);
+	const mutedPlayers = new Set(players.filter((p) => p.isMuted).map((p) => p.name));
+
 	const chatScrollPosition = useAppSelector(state => state.room2.chatScrollPosition);
 
 	const appDispatch = useAppDispatch();
@@ -29,7 +33,7 @@ export default function GameLogView() {
 		<div className="game__log">
 			<ChatLog
 				className="gameLog"
-				messages={chat.messages}
+				messages={chat.messages.filter((message) => !mutedPlayers.has(message.sender))}
 				user={name}
 				message={chat.message}
 				onNicknameClick={appendMentionedUser}

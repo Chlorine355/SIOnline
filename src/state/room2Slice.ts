@@ -495,6 +495,13 @@ export const room2Slice = createSlice({
 				p.isAppellating = false;
 			});
 		},
+		setPlayerIsMuted: (state: Room2State, action: PayloadAction<{ name: string, isMuted: boolean }>) => {
+			state.persons.players.forEach(p => {
+				if (p.name === action.payload.name) {
+					p.isMuted = action.payload.isMuted;
+				}
+			});
+		},
 		playerRoundStateCleared: (state: Room2State) => {
 			state.persons.players.forEach(p => {
 				p.mediaPreloaded = false;
@@ -1428,6 +1435,7 @@ export const {
 	setDemoButtonHighlights,
 	resetDemoButtonHighlights,
 	playerCountChanged,
+	setPlayerIsMuted,
 } = room2Slice.actions;
 
 export default room2Slice.reducer;
