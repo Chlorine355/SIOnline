@@ -45,6 +45,11 @@ const PlayersView: React.FC<PlayersViewProps> = (props) => {
 		appDispatch(playerSelected(index));
 	};
 
+	const [isSorted, setIsSorted] = React.useState(false);
+	const [isExpanded, setIsExpanded] = React.useState(false);
+	const [isHideNominals, setIsHideNominals] = React.useState(false);
+
+
 	const isLarge = props.players.length > 6;
 
 	const renderPlayer = (player: PlayerInfo, index: number): JSX.Element => {
@@ -67,6 +72,7 @@ const PlayersView: React.FC<PlayersViewProps> = (props) => {
 			avatarClass={avatarClass}
 			index={index}
 			isMuted={player.isMuted}
+			hideNominals={isMe ? false : isHideNominals}
 			onPlayerSelected={() => onPlayerSelected(index)}
 			onSumChanged={(sum) => props.onSumChanged(index, sum)} />;
 	};
@@ -74,7 +80,20 @@ const PlayersView: React.FC<PlayersViewProps> = (props) => {
 	return !props.isVisible ? null : (
 		<div className={`playersPanel ${isLarge ? 'large' : ''}`}>
 			<ul className="gamePlayers" ref={listRef}>
-				{props.players.map(renderPlayer)}
+				{isExpanded ? <div className="settings">
+					<button onClick={() => setIsExpanded(false)}>{'<<'}</button>
+					<label>
+						<span>Сортировка</span>
+						<input type='checkbox' checked={isSorted} onClick={() => setIsSorted(!isSorted)} />
+					</label>
+					<label>
+						<span>Без номиналов</span>
+						<input type='checkbox' checked={isHideNominals} onClick={() => setIsHideNominals(!isHideNominals)} />
+					</label>
+				</div> : <button onClick={() => setIsExpanded(true)}>{'>>'}</button>}
+				{isSorted
+					? props.players.toSorted((a: PlayerInfo, b: PlayerInfo) => b.sum - a.sum).map(renderPlayer)
+					: props.players.map(renderPlayer)}
 			</ul>
 		</div>
 	);

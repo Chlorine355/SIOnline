@@ -36,6 +36,7 @@ interface PlayerViewProps {
 	windowHeight: number;
 	currentPrice: number;
 	isMuted?: boolean;
+	hideNominals?: boolean;
 
 	listRef: React.RefObject<HTMLUListElement>;
 
@@ -56,7 +57,7 @@ export function PlayerView(props: PlayerViewProps): JSX.Element {
 	const scoreEditorRef = React.useRef<HTMLDivElement>(null);
 	const sumFieldRef = React.useRef<HTMLDivElement>(null);
 	const [isScoreEditorVisible, setIsScoreEditorVisible] = React.useState(false);
-	const { player, account, isMe, sex, avatar, avatarClass, avatarVideo, index } = props;
+	const { player, account, isMe, sex, avatar, avatarClass, avatarVideo, index, hideNominals } = props;
 
 	const areSumsEditable = useAppSelector(state => state.room2.areSumsEditable);
 	const isGameStarted = useAppSelector(state => state.room2.stage.isGameStarted);
@@ -280,7 +281,7 @@ export function PlayerView(props: PlayerViewProps): JSX.Element {
 								onFocus={() => setIsScoreEditorVisible(true)}
 								onBlur={handleNumericTextBoxBlur}
 							/>
-						) : <AutoSizedText className='staticSum' maxFontSize={48}>{player.sum}</AutoSizedText>}
+						) : <AutoSizedText className='staticSum' maxFontSize={48}>{hideNominals ? '???' : player.sum}</AutoSizedText>}
 					</div>
 				</div>
 
