@@ -45,5 +45,30 @@
 }
 
 .avatarSelector {
-	display: none;
+    display: none;
+}
+
+.drop-wrapper {
+    height: 100%;
+
+    &>input {
+        display: none;
+    }
+
+}
+
+.dropzone {
+    display: block;
+    position: relative;
+    height: 100%;
+    border: 2px dashed aliceblue;
+    padding: 20px;
+    border-radius: 16px;
+}
+
+.avatarWrapper {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }

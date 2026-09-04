@@ -90,8 +90,29 @@ export function AvatarView(props: AvatarViewProps): JSX.Element {
 		}
 	}
 
+	React.useEffect(() => {
+		const handler = function (evt: Event) {
+			evt.preventDefault();
+			return false;
+		};
+
+		['dragover', 'drop'].forEach(function (event) {
+			document.addEventListener(event, handler);
+		});
+		return () => {
+			['dragover', 'drop'].forEach(function (event) {
+				document.removeEventListener(event, handler);
+			});
+		};
+	}, []);
+
+	const dropHandler = (event: React.DragEvent) => {
+		props.onAvatarSelected(event.dataTransfer?.files[0], appDispatch);
+	};
+
 	return (
-		<>
+
+		<div className="avatarWrapper">
 			{props.avatarKey ? (
 				<FlyoutButton
 					disabled={props.disabled}
@@ -100,6 +121,9 @@ export function AvatarView(props: AvatarViewProps): JSX.Element {
 					flyout={
 						<ul className='avatar-menu'>
 							<li onClick={onAreaClick}>{localization.selectAvatar}</li>
+							<li onClick={() => {
+								window.open('https://pinterest.com', '_blank');
+							}}>Pinterest</li>
 							<li onClick={onAvatarDeleted}>{localization.deleteAvatar}</li>
 						</ul>
 					}>
@@ -109,7 +133,6 @@ export function AvatarView(props: AvatarViewProps): JSX.Element {
 					{renderEmpty(sex)}
 				</div>
 			)}
-
 			<input
 				ref={inputRef}
 				className='avatarSelector'
@@ -119,7 +142,22 @@ export function AvatarView(props: AvatarViewProps): JSX.Element {
 				disabled={props.avatarLoadProgress}
 				onChange={onAvatarChanged}
 			/>
-		</>
+
+			<div className="drop-wrapper">
+				<label htmlFor="files" className="dropzone" onDrop={dropHandler}>
+					или перетащите сюда
+				</label>
+				<input
+					id="files"
+					type="file"
+					placeholder='drop'
+					accept=".jpg,.jpeg,.png"
+					aria-label='Avatar selector'
+					disabled={props.avatarLoadProgress}
+					onDrop={dropHandler}
+				/>
+			</div>
+		</div>
 	);
 }
 
