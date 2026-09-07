@@ -28,6 +28,14 @@
     object-fit: contain;
 }
 
+.cheat_underlay {
+	position: absolute;
+	max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+	opacity: 0.35;
+}
+
 .inGameImg.animate {
 	animation-name: animateClip;
 	animation-fill-mode: forwards;

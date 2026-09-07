@@ -58,11 +58,12 @@ const ImageContent: React.FC<ImageContentProps> = ({ uri }) => {
 	const searchHandler = () => {
 		window.open(`https://ya.ru/images/search?rpt=imageview&url=${uri}`, '_blank');
 	};
-
 	return (
 		<div className='image-host'>
 			<img alt='spinner' className="spinnerImg" ref={spinnerRef} src={spinnerSvg} />
 			<img alt='image' className={`inGameImg${animatingClass}`} style={cropStyle} ref={imageRef} src={uri} onLoad={handleImageLoad} />
+			{isTimerRunning && 
+			<img alt='image' className={'cheat_underlay'} src={uri} onLoad={handleImageLoad} />}
 			<button className="cheats" onClick={searchHandler}>🔎</button>
 		</div>
 	);
