@@ -46,10 +46,14 @@ export default function ValidationArea(props: ValidationAreaProps): JSX.Element 
 	const answerDeviation = useAppSelector(state => state.table.answerDeviation);
 	const rightAnswer = validation.rightAnswers.length > 0 ? validation.rightAnswers[0] : null;
 	const hint = rightAnswer && hintShowman ? rightAnswer : null;
+	const [blurred, setBlurred] = React.useState(false);
 
-	return <div className={`validationArea ${props.className || ''}`}>
+
+	return <>
+	<button onClick={() => setBlurred(!blurred)}>{blurred ? 'Показать ответ' : 'Скрыть ответ'}</button>
+	<div style={blurred ? { filter: 'blur(15px)' } : undefined} className={`validationArea ${props.className || ''}`}>
 		{validation.queue.length > 0 && !props.onlyHint
 			? <AnswerValidation />
 			: getCompactView(hint, hiddenComments, layoutMode, content, answerDeviation)}
-	</div>;
+	</div></>;
 }
